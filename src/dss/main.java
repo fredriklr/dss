@@ -8,6 +8,9 @@ public class main {
 		
 		
 		fitte slekk
+		
+		nikki
+		
 	}
 
 }
