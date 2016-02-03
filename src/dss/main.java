@@ -12,7 +12,13 @@ public class main {
 		
 		
 		
+<<<<<<< HEAD
 		
+=======
+		fitte slekk
+		d
+		nikki
+>>>>>>> a03636bc635ad36fb8eee70f876d12bfe629586e
 		
 	}
 
