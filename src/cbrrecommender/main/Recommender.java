@@ -12,6 +12,7 @@ import de.dfki.mycbr.core.casebase.Instance;
 import de.dfki.mycbr.core.model.AttributeDesc;
 import de.dfki.mycbr.core.model.Concept;
 import de.dfki.mycbr.core.model.FloatDesc;
+import de.dfki.mycbr.core.model.IntegerDesc;
 import de.dfki.mycbr.core.model.SymbolDesc;
 import de.dfki.mycbr.core.retrieval.Retrieval;
 import de.dfki.mycbr.core.retrieval.Retrieval.RetrievalMethod;
@@ -36,7 +37,7 @@ public class Recommender {
 		myConcept = rec.getConceptByID(engine.getConceptName());	
 	}
 
-	public String solveOuery(String color, Float price, Float mileage, Integer numberofcases) {
+	public String solveOuery(Integer dum, Integer overvekt, Integer kortvokst, Integer numberofcases) {
 
 		String answer="";		
 		// create a new retrieval
@@ -45,35 +46,42 @@ public class Recommender {
 		ret.setRetrievalMethod(RetrievalMethod.RETRIEVE_SORTED);		
 		// create a query instance
 		Instance query = ret.getQueryInstance();		
-		// Insert values into the query: Symbolic Description
-		SymbolDesc colorDesc = (SymbolDesc) myConcept.getAllAttributeDescs().get("Color");
-		query.addAttribute(colorDesc,colorDesc.getAttribute(color));
-
-		// Insert values into the query: Float Description
-		FloatDesc priceDesc = (FloatDesc) myConcept.getAllAttributeDescs().get("Price");
+		// Insert values into the query: Integer Description
+		IntegerDesc dumDesc = (IntegerDesc) myConcept.getAllAttributeDescs().get("Dum");
 		try {
-			query.addAttribute(priceDesc,priceDesc.getAttribute(price));
+			query.addAttribute(dumDesc, dumDesc.getAttribute(dum));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// Insert values into the query: Float Description
-		FloatDesc mileageDesc = (FloatDesc) myConcept.getAllAttributeDescs().get("Mileage");
+		// Insert values into the query: Integer Description
+		IntegerDesc overvektDesc = (IntegerDesc) myConcept.getAllAttributeDescs().get("Overvekt");
 		try {
-			query.addAttribute(mileageDesc,mileageDesc.getAttribute(mileage));
+			query.addAttribute(overvektDesc, overvektDesc.getAttribute(overvekt));
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		// Insert values into the query: Integer Description
+		IntegerDesc kortvokstDesc = (IntegerDesc) myConcept.getAllAttributeDescs().get("Kortvokst");
+		try {
+			query.addAttribute(kortvokstDesc, kortvokstDesc.getAttribute(kortvokst));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		//System.out.println(query);
 
 		// perform retrieval
 		ret.start();	
+		System.out.println(ret);
+		System.out.println();
 		// get the retrieval result
 		List <Pair<Instance, Similarity>> result = ret.getResult(); 
 		// get the case name	
 		if(result.size()>0){
-
+			//System.out.println(result.get(3).getFirst().getName());
 			// get the best case's name
 			String casename = result.get(0).getFirst().getName();	
 			// get the similarity value
@@ -87,7 +95,7 @@ public class Recommender {
 			for(int i = 0; i<numberofcases; i++){
 
 				liste.add(getAttributes(result.get(i), rec.getConceptByID(engine.getConceptName())));
-				System.out.println("liste "+liste.get(i).toString());
+				System.out.println("Case " + result.get(i).getFirst().getName() + " " + liste.get(i).toString());
 				answer=answer+"<tr><td>"+result.get(i).getFirst().getName()+"</td><td>"+liste.get(i).toString()+"</td></tr>";
 			}
 
