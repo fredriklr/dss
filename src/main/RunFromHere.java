@@ -1,9 +1,10 @@
 package main;
 
 import cbr.GenerateQuery;
+import gui.Loader;
 
 
-public class RunFromHere {
+public class RunFromHere extends Loader{
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -16,6 +17,9 @@ public class RunFromHere {
 		
 		
 		GenerateQuery myQuery = new GenerateQuery(hoyde, vekt, alder, iq, numCases);
+		
+		
+		gui.Loader.launch(args);
 
 	}
 
