@@ -26,6 +26,8 @@ public class Recommender {
 	public Project rec;
 	public DefaultCaseBase cb;
 	public Concept myConcept;
+	//create array with needed info to display in gui
+	public static ArrayList<String> caseObjects = new ArrayList<String>();
 
 	public void loadengine () {
 
@@ -88,13 +90,12 @@ public class Recommender {
 			Double sim = result.get(0).getSecond().getValue();		
 			answer = "I found "+casename+" with a similarity of "+sim+" as the best match.";
 			answer = answer+"The "+numberofcases+" best cases shown in a table: <br /> <br /> <table border=\"1\">";	
-			ArrayList<Hashtable<String, String>> liste = new ArrayList<Hashtable<String, String>>();	
+			ArrayList<Hashtable<String, String>> liste = new ArrayList<Hashtable<String, String>>();
 			// if more case results are requested than we have in our case base at all:
 			if(numberofcases>=cb.getCases().size()){numberofcases = cb.getCases().size();}
-
-			for(int i = 0; i<numberofcases; i++){
-
-				liste.add(getAttributes(result.get(i), rec.getConceptByID(engine.getConceptName())));
+			for(int i = 0; i<numberofcases; i++){			
+				liste.add(getAttributes(result.get(i), rec.getConceptByID(engine.getConceptName())));				
+				caseObjects.add(i, result.get(i).getFirst().getName() + " " + liste.get(i).toString());	
 				System.out.println("Case " + result.get(i).getFirst().getName() + " " + liste.get(i).toString());
 				answer=answer+"<tr><td>"+result.get(i).getFirst().getName()+"</td><td>"+liste.get(i).toString()+"</td></tr>";
 			}
