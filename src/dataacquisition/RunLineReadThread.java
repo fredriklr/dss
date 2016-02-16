@@ -16,7 +16,9 @@ public class RunLineReadThread implements Runnable {
 		System.out.println("Creating " + threadName);
 	}
 
-	static String csvFile = "C:/Users/NiklasBae/workspace/dss/lib/person.csv";
+	static String csvFile = System.getProperty("user.dir") + "/lib/person.csv";
+			
+			//"C:/Users/NiklasBae/workspace/dss/lib/person.csv";
 	static BufferedReader br = null;
 	static String line = "";
 	static String cvsSplitBy = ";";
