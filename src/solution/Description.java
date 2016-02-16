@@ -8,7 +8,9 @@ import java.util.ArrayList;
 
 public class Description {
 
-	static String csvFile = "C:/Users/NiklasBae/workspace/dss/lib/description.csv";
+	static String csvFile = System.getProperty("user.dir") + "/lib/description.csv";
+			
+			//"C:/Users/NiklasBae/workspace/dss/lib/description.csv";
 	static BufferedReader br = null;
 	static String line = "";
 	static String cvsSplitBy = ";";
