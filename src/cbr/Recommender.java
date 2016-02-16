@@ -1,4 +1,4 @@
-package cbrrecommender.main;
+package cbr;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -26,29 +26,32 @@ public class Recommender {
 	public Project rec;
 	public DefaultCaseBase cb;
 	public Concept myConcept;
-	//create array with needed info to display in gui
+	// create array with needed info to display in gui
 	public static ArrayList<String> caseObjects = new ArrayList<String>();
+	//create array with casenumber only. clean later
+	public static String caseNumber = null;
 
-	public void loadengine () {
+	public void loadengine() {
 
-		engine = new CBREngine();	
+		engine = new CBREngine();
 		rec = engine.createProjectFromPRJ();
-		// create case bases and assign the case bases that will be used for submitting a query 
-		cb = (DefaultCaseBase)rec.getCaseBases().get(engine.getCaseBase());
-		// create a concept and get the main concept of the project; 
-		myConcept = rec.getConceptByID(engine.getConceptName());	
+		// create case bases and assign the case bases that will be used for
+		// submitting a query
+		cb = (DefaultCaseBase) rec.getCaseBases().get(engine.getCaseBase());
+		// create a concept and get the main concept of the project;
+		myConcept = rec.getConceptByID(engine.getConceptName());
 	}
 
 	public String solveOuery(Integer dum, Integer overvekt, Integer kortvokst, Integer numberofcases) {
 
-		String answer="";		
+		String answer = "";
 		// create a new retrieval
 		Retrieval ret = new Retrieval(myConcept, cb);
 		// specify the retrieval method
-		ret.setRetrievalMethod(RetrievalMethod.RETRIEVE_SORTED);		
+		ret.setRetrievalMethod(RetrievalMethod.RETRIEVE_SORTED);
 		// create a query instance
-		Instance query = ret.getQueryInstance();		
-		// Insert values into the query: Integer Description
+		Instance query = ret.getQueryInstance();
+		// Insert values into the query: Integer Description 
 		IntegerDesc dumDesc = (IntegerDesc) myConcept.getAllAttributeDescs().get("Dum");
 		try {
 			query.addAttribute(dumDesc, dumDesc.getAttribute(dum));
@@ -72,46 +75,57 @@ public class Recommender {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-				
-		//System.out.println(query);
-
 		// perform retrieval
-		ret.start();	
+		ret.start();
 		System.out.println(ret);
 		System.out.println();
 		// get the retrieval result
-		List <Pair<Instance, Similarity>> result = ret.getResult(); 
-		// get the case name	
-		if(result.size()>0){
-			//System.out.println(result.get(3).getFirst().getName());
+		List<Pair<Instance, Similarity>> result = ret.getResult();
+		// get the case name
+		if (result.size() > 0) {
+			// System.out.println(result.get(3).getFirst().getName());
 			// get the best case's name
-			String casename = result.get(0).getFirst().getName();	
+			String casename = result.get(0).getFirst().getName();
 			// get the similarity value
-			Double sim = result.get(0).getSecond().getValue();		
-			answer = "I found "+casename+" with a similarity of "+sim+" as the best match.";
-			answer = answer+"The "+numberofcases+" best cases shown in a table: <br /> <br /> <table border=\"1\">";	
+			Double sim = result.get(0).getSecond().getValue();
+			answer = "I found " + casename + " with a similarity of " + sim + " as the best match.";
+			answer = answer + "The " + numberofcases
+					+ " best cases shown in a table: <br /> <br /> <table border=\"1\">";
 			ArrayList<Hashtable<String, String>> liste = new ArrayList<Hashtable<String, String>>();
-			// if more case results are requested than we have in our case base at all:
-			if(numberofcases>=cb.getCases().size()){numberofcases = cb.getCases().size();}
-			for(int i = 0; i<numberofcases; i++){			
-				liste.add(getAttributes(result.get(i), rec.getConceptByID(engine.getConceptName())));				
-				caseObjects.add(i, result.get(i).getFirst().getName() + " " + liste.get(i).toString());	
+			// if more case results are requested than we have in our case base
+			// at all:
+			if (numberofcases >= cb.getCases().size()) {
+				numberofcases = cb.getCases().size();
+			}
+			for (int i = 0; i < numberofcases; i++) {
+				liste.add(getAttributes(result.get(i), rec.getConceptByID(engine.getConceptName())));
+				caseObjects.add(i, result.get(i).getFirst().getName() + " " + liste.get(i).toString());
+				caseNumber = result.get(0).getFirst().toString();
+				System.out.println(caseNumber);
 				System.out.println("Case " + result.get(i).getFirst().getName() + " " + liste.get(i).toString());
-				answer=answer+"<tr><td>"+result.get(i).getFirst().getName()+"</td><td>"+liste.get(i).toString()+"</td></tr>";
+				answer = answer + "<tr><td>" + result.get(i).getFirst().getName() + "</td><td>"
+						+ liste.get(i).toString() + "</td></tr>";
 			}
 
-			answer= answer+"</table>";		
-		}	
-		else{System.out.println("Retrieval Result is empty");}
+			answer = answer + "</table>";
+		} else {
+			System.out.println("Retrieval Result is empty");
+		}
 
 		return answer;
 	}
+
 	/**
-	 * This method delivers a Hashtable which contains the Attributs names (Attributes of the case) combined with their respective values.
+	 * This method delivers a Hashtable which contains the Attributs names
+	 * (Attributes of the case) combined with their respective values.
+	 * 
 	 * @author weber,koehler,namuth
-	 * @param r = An Instance.
-	 * @param concept = A Concept
-	 * @return List = List containing the Attributes of a case with their values.
+	 * @param r
+	 *            = An Instance.
+	 * @param concept
+	 *            = A Concept
+	 * @return List = List containing the Attributes of a case with their
+	 *         values.
 	 */
 	public static Hashtable<String, String> getAttributes(Pair<Instance, Similarity> r, Concept concept) {
 
@@ -125,10 +139,14 @@ public class Recommender {
 		}
 		return table;
 	}
+
 	/**
-	 * This Method generates an ArrayList, which contains all Categories of aa Concept.
+	 * This Method generates an ArrayList, which contains all Categories of aa
+	 * Concept.
+	 * 
 	 * @author weber,koehler,namuth
-	 * @param r  =  An Instance.
+	 * @param r
+	 *            = An Instance.
 	 * @return List = List containing the Attributes names.
 	 */
 	public static ArrayList<String> getCategories(Pair<Instance, Similarity> r) {
@@ -149,21 +167,23 @@ public class Recommender {
 
 	public String displayAmalgamationFunctions() {
 
-		ArrayList <String> amalgam = new ArrayList<String>(); 
-		String listoffunctions="Currently available Amalgamationfunctions: <br /> <br />";		 
-		AmalgamationFct current = myConcept.getActiveAmalgamFct();		 
-		System.out.println("Amalgamation Function is used = "+current.getName());		 
+		ArrayList<String> amalgam = new ArrayList<String>();
+		String listoffunctions = "Currently available Amalgamationfunctions: <br /> <br />";
+		AmalgamationFct current = myConcept.getActiveAmalgamFct();
+		System.out.println("Amalgamation Function is used = " + current.getName());
 		List<AmalgamationFct> liste = myConcept.getAvailableAmalgamFcts();
 
-		for (int i = 0; i < liste.size(); i++){
+		for (int i = 0; i < liste.size(); i++) {
 			System.out.println(liste.get(i).getName());
-			listoffunctions=listoffunctions+liste.get(i).getName()+"<br />";			 
+			listoffunctions = listoffunctions + liste.get(i).getName() + "<br />";
 		}
 
-		listoffunctions=listoffunctions+(" <br /> <br /> Currently selected Amalgamationfunction: "+current.getName()+"\n");
-		listoffunctions=listoffunctions+(" <br /> <br /> Please type the name of the Amalgamationfunction to use in the " +
-				" Field \"Amalgamationfunction\" it will be automatically used during the next retrieval");
-		System.out.println(listoffunctions);	 
-		return listoffunctions;		 
-	}	 
+		listoffunctions = listoffunctions
+				+ (" <br /> <br /> Currently selected Amalgamationfunction: " + current.getName() + "\n");
+		listoffunctions = listoffunctions
+				+ (" <br /> <br /> Please type the name of the Amalgamationfunction to use in the "
+						+ " Field \"Amalgamationfunction\" it will be automatically used during the next retrieval");
+		System.out.println(listoffunctions);
+		return listoffunctions;
+	}
 }

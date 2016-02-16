@@ -13,10 +13,11 @@ public class Loader extends Application {
 		try {
 			Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("gui/TestGUI.fxml"));
 			Scene scene = new Scene(root);
-			//scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			// scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
-		} catch(Exception e) {
+			primaryStage.setTitle("Fishy");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
