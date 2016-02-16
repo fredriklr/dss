@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import cbr.GenerateQuery;
+import dataacquisition.RunLineReadThread;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -25,32 +26,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 
 public class Controller implements Initializable {
-	@FXML
-	private Slider sliderHoyde;
 
-	@FXML
-	private Slider sliderVekt;
-
-	@FXML
-	private Slider sliderAlder;
-
-	@FXML
-	private Slider sliderIq;
+	public static long pause = 1000000000;
+	
+	RunLineReadThread R1 = new RunLineReadThread("Thread 1");
 
 	@FXML
 	private Slider sliderNumCases;
-
-	@FXML
-	private Label hoydeNum;
-
-	@FXML
-	private Label alderNum;
-
-	@FXML
-	private Label vektNum;
-
-	@FXML
-	private Label iqNum;
 
 	@FXML
 	private Label numCasesNum;
@@ -60,6 +42,9 @@ public class Controller implements Initializable {
 
 	@FXML
 	private Button btn;
+
+	@FXML
+	private Button startRet;
 
 	@FXML
 	private Label caseNum;
@@ -73,44 +58,16 @@ public class Controller implements Initializable {
 	@FXML
 	private TextField solutionText;
 
-	double hoyde;
-	double vekt;
-	int alder;
-	int iq;
-	int numCases;
+	public static double hoyde;
+	public static double vekt;
+	public static int alder;
+	public static int iq;
+	static int numCases;
 
-	public static final ObservableList casesDisplay = FXCollections.observableArrayList();
+	private ObservableList casesDisplay = FXCollections.observableArrayList();
 
 	@FXML
 	public void handleSliderChange() {
-		sliderHoyde.valueProperty().addListener(new ChangeListener() {
-			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				hoydeNum.textProperty().setValue(String.valueOf((int) sliderHoyde.getValue()));
-			}
-		});
-
-		sliderVekt.valueProperty().addListener(new ChangeListener() {
-			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				vektNum.textProperty().setValue(String.valueOf((int) sliderVekt.getValue()));
-			}
-		});
-
-		sliderAlder.valueProperty().addListener(new ChangeListener() {
-			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				alderNum.textProperty().setValue(String.valueOf((int) sliderAlder.getValue()));
-			}
-		});
-
-		sliderIq.valueProperty().addListener(new ChangeListener() {
-			@Override
-			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-				iqNum.textProperty().setValue(String.valueOf((int) sliderIq.getValue()));
-			}
-		});
-
 		sliderNumCases.valueProperty().addListener(new ChangeListener() {
 			@Override
 			public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -120,14 +77,9 @@ public class Controller implements Initializable {
 	}
 
 	@FXML
-	public void handleButtonAction(ActionEvent e) {
-
-		// generate query
-		hoyde = Double.parseDouble(hoydeNum.getText());
-		vekt = Double.parseDouble(vektNum.getText());
-		alder = Integer.parseInt(alderNum.getText());
-		iq = Integer.parseInt(iqNum.getText());
-		numCases = Integer.parseInt(numCasesNum.getText());
+	public void handleButtonAction(ActionEvent e) {		
+		numCases = 3; //Integer.parseInt(numCasesNum.getText());
+		
 		GenerateQuery myQuery = new GenerateQuery(hoyde, vekt, alder, iq, numCases);
 
 		// generate objects to display in caseList
@@ -147,11 +99,16 @@ public class Controller implements Initializable {
 
 		// Fill in descriptive info
 		solution.Description.add();
-		
-	
+
 		diagnosisText.setText(solution.Description.description.get(caseInteger).get(1));
 		descriptionText.setText(solution.Description.description.get(caseInteger).get(2));
 		solutionText.setText(solution.Description.description.get(caseInteger).get(3));
+		
+		R1.resume();
+	}
+
+	public void startLineReader(ActionEvent e) {
+		R1.start();
 	}
 
 	@Override

@@ -17,6 +17,7 @@ public class Loader extends Application {
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			primaryStage.setTitle("Fishy");
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
